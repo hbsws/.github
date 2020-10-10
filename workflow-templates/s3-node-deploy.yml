@@ -1,0 +1,41 @@
+name: S3 Node Deployment
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Configure AWS credentials from Test account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.SANDBOX_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SANDBOX_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+        
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      
+      - name: Build and S3 Sync
+        env: 
+          BASE_PATH: /news
+          BUCKET: hbsws-github-export
+          APP: pro
+        run: |
+          # RUN YOUR BUILD SCRIPTS NOW
+          aws s3 sync out s3://$BUCKET/${{ env.REPOSITORY_NAME }}
