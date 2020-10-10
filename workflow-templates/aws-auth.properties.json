@@ -1,0 +1,8 @@
+{
+  "name": "AWS Authentication",
+  "description": "Apply secrets for AWS Authentication",
+  "iconName": "example-icon",
+  "categories": [
+      "AWS"
+  ]
+}
